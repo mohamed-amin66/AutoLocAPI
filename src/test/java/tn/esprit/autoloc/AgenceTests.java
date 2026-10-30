@@ -126,28 +126,40 @@ public class AgenceTests {
     }
     @Test
     public void loadPagedAgences() {
-        Pageable pageable = PageRequest.of(
-                0,
-                2,
-                Sort.by(Sort.Direction.DESC, "idAgence")
-        );
 
-        Page<Agence> page = fullAgenceRepository.findAll(pageable);
+        int pageNumber = 0;
+        int pageSize = 2;
+        Page<Agence> page;
 
-        System.out.println("===== Agences paginées =====");
-        System.out.println("Nombre total de pages : " + page.getTotalPages());
-        System.out.println("Page en cours : " + (page.getNumber() + 1));
-
-        for (Agence agence : page.getContent()) {
-            System.out.println(
-                    agence.getIdAgence() + " | " +
-                            agence.getNom() + " | " +
-                            agence.getAdresse() + " | " +
-                            agence.getVille() + " | " +
-                            agence.getTelephone()
+        do {
+            Pageable pageable = PageRequest.of(
+                    pageNumber,
+                    pageSize,
+                    Sort.by(Sort.Direction.DESC, "idAgence")
             );
-        }
+
+            page = fullAgenceRepository.findAll(pageable);
+
+            System.out.println("\n========== PAGE "
+                    + (pageNumber + 1) + "/" + page.getTotalPages()
+                    + " ==========");
+
+            for (Agence agence : page.getContent()) {
+                System.out.println(
+                        agence.getIdAgence() + " | " +
+                                agence.getNom() + " | " +
+                                agence.getAdresse() + " | " +
+                                agence.getVille() + " | " +
+                                agence.getTelephone()
+                );
+            }
+
+            pageNumber++;
+
+        } while (page.hasNext());
     }
+
+
 }
 
 interface AgenceRepositoryMock extends CrudRepository<Agence, Long>{
